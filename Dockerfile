@@ -54,7 +54,7 @@ RUN chmod uga+x /usr/local/bin/install-php-extensions && sync && \
 # Initialize php.ini:
 #################
 RUN cp /usr/local/etc/php/php.ini-production /usr/local/etc/php/php.ini
-RUN curl -o /etc/php-cacert.pem https://curl.haxx.se/ca/cacert.pem
+RUN curl -k -L -o /etc/php-cacert.pem https://curl.se/ca/cacert.pem
 RUN sed -i '/;curl.cainfo =/c\curl.cainfo = /etc/php-cacert.pem' $(php -i | grep /.+/php.ini -oE) && \
 	sed -i '/;openssl.cafile=/c\openssl.cafile = /etc/php-cacert.pem' $(php -i | grep /.+/php.ini -oE) && \
 	sed -i '/;cgi.fix_pathinfo=1/c\cgi.fix_pathinfo=0' $(php -i | grep /.+/php.ini -oE) && \
