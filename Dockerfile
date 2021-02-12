@@ -62,6 +62,12 @@ RUN sed -i '/;curl.cainfo =/c\curl.cainfo = /etc/php-cacert.pem' $(php -i | grep
 	sed -i '/zlib.output_compression = Off/c\zlib.output_compression = On' $(php -i | grep /.+/php.ini -oE) 
 
 
+#################
+# Initialize supervisor:
+#################
+RUN apt-get install supervisor -y
+
+
 
 #################
 # Install Composer:
