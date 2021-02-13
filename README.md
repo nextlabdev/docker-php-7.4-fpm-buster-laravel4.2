@@ -1,3 +1,11 @@
+Contains:
+- php: 7.4-fpm
+- zsh
+- supervisor
+- Composer
+
+
+
 Sample Usage:
 
 ```

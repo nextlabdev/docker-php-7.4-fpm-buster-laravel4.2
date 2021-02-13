@@ -16,6 +16,7 @@ RUN echo "deb-src http://deb.debian.org/debian buster-updates main contrib non-f
 RUN apt-get update -y
 RUN apt-get install -y cron apt-utils build-essential net-tools iputils-ping \
 	libfreetype6-dev libjpeg62-turbo-dev libpng-dev vim git zip unzip wget 
+RUN apt-get update -y
 
 
 #################
@@ -40,6 +41,22 @@ RUN sh -c "$(wget https://raw.github.com/robbyrussell/oh-my-zsh/master/tools/ins
 
 
 #################
+# Initialize supervisor:
+#################
+RUN apt-get install supervisor -y
+RUN mkdir -p /var/log/supervisor
+RUN touch /var/log/supervisor/supervisord.log
+RUN chmod -R 777 /var/log/supervisor
+RUN chmod 777 /run
+RUN sed -i "s/0700/0777/g" /etc/supervisor/supervisord.conf 
+RUN sed -i '8 i nodaemon=true' /etc/supervisor/supervisord.conf 
+RUN sed -i '8 i logfile_maxbytes=50MB' /etc/supervisor/supervisord.conf 
+RUN sed -i '8 i logfile_backups=10' /etc/supervisor/supervisord.conf 
+RUN touch /var/run/supervisor.sock
+RUN chmod -R 777 /var/run
+
+
+#################
 # Install PHP extensions:
 #################
 ADD https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions /usr/local/bin/
@@ -60,13 +77,6 @@ RUN sed -i '/;curl.cainfo =/c\curl.cainfo = /etc/php-cacert.pem' $(php -i | grep
 	sed -i '/;cgi.fix_pathinfo=1/c\cgi.fix_pathinfo=0' $(php -i | grep /.+/php.ini -oE) && \
 	sed -i '/expose_php = On/c\expose_php = Off' $(php -i | grep /.+/php.ini -oE) && \
 	sed -i '/zlib.output_compression = Off/c\zlib.output_compression = On' $(php -i | grep /.+/php.ini -oE) 
-
-
-#################
-# Initialize supervisor:
-#################
-RUN apt-get install supervisor -y
-
 
 
 #################
