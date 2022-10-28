@@ -1,4 +1,4 @@
-FROM php:7.4-fpm-buster
+FROM php:7.4.32-fpm-buster
 
 
 #################
@@ -8,6 +8,7 @@ RUN sed -i 's/# deb-src/deb-src/' /etc/apt/sources.list
 RUN echo "deb-src http://deb.debian.org/debian buster main contrib non-free" >> /etc/apt/sources.list
 RUN echo "deb-src http://deb.debian.org/debian-security/ buster/updates main contrib non-free" >> /etc/apt/sources.list
 RUN echo "deb-src http://deb.debian.org/debian buster-updates main contrib non-free" >> /etc/apt/sources.list
+RUN apt-get autoclean
 
 
 #################
@@ -17,14 +18,15 @@ RUN apt-get update -y
 RUN apt-get install -y cron apt-utils build-essential net-tools iputils-ping \
 	libfreetype6-dev libjpeg62-turbo-dev libpng-dev vim git zip unzip wget 
 RUN apt-get update -y
+RUN apt-get autoclean
 
 
 #################
 # Fix GnuTLS error:
 #################
-RUN apt-get install apt-transport-https ca-certificates
 RUN /usr/sbin/update-ca-certificates --fresh
 RUN apt-get build-dep wget -y
+RUN apt-get autoclean
 
 
 #################
@@ -38,7 +40,7 @@ RUN touch ~/.vimrc && echo "set mouse-=a" > ~/.vimrc && . ~/.vimrc
 #################
 RUN apt-get install zsh -y
 RUN sh -c "$(wget https://raw.github.com/robbyrussell/oh-my-zsh/master/tools/install.sh -O -)"
-
+RUN apt-get autoclean
 
 #################
 # Initialize supervisor:
@@ -54,7 +56,7 @@ RUN sed -i '8 i logfile_maxbytes=50MB' /etc/supervisor/supervisord.conf
 RUN sed -i '8 i logfile_backups=10' /etc/supervisor/supervisord.conf 
 RUN touch /var/run/supervisor.sock
 RUN chmod -R 777 /var/run
-
+RUN apt-get autoclean
 
 #################
 # Install PHP extensions:
